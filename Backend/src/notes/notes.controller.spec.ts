@@ -31,7 +31,7 @@ describe('NotesController', () => {
     // Create user for tests
     user = await prisma.user.create({
       data: {
-        name: 'Testuser',
+        username: 'Testuser',
         email: 'test@example.com',
         password: 'secret',
       },

@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,11 +13,21 @@ async function bootstrap() {
     // Disable logger in production
     Logger.overrideLogger(false); // Disable logger in production
   }
+  // Enable CookieParser
+  app.use(cookieParser());
   // Enable Cors
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
     credentials: false,
   });
+  // Enable RateLimiter
+  app.use(
+    '/auth',
+    rateLimit({
+      windowMs: 60 * 1000, //
+      max: 10,
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

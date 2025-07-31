@@ -6,7 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
@@ -44,8 +44,8 @@ export class UsersService {
       const updates: UpdateUserDto = {};
 
       // Check and update name
-      if (data.name !== existingUser.name) {
-        updates.name = data.name;
+      if (data.username !== existingUser.username) {
+        updates.username = data.username;
       }
       // Check and update email
       if (data.email !== existingUser.email) {

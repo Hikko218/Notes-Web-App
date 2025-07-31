@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { execSync } from 'child_process';
 
@@ -10,14 +10,14 @@ beforeAll(() => {
 });
 
 describe('UsersService', () => {
-  let service: UsersService;
+  let service: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, PrismaService],
+      providers: [UserService, PrismaService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UserService>(UserService);
 
     // Clean database
     await service['prisma'].note.deleteMany({});
@@ -31,19 +31,19 @@ describe('UsersService', () => {
   it('create, retrieve, delete, and update a user', async () => {
     // Create user
     const user: {
-      name: string;
+      username: string;
       email: string;
       password: string;
       id: number;
     } = await service.createUser({
-      name: 'Testuser',
+      username: 'Testuser',
       email: `test${Date.now()}@example.com`,
       password: 'secret',
     });
     expect(user).toBeDefined();
     // Explicitly cast the expected object to ensure type safety
     expect(user).toMatchObject({
-      name: 'Testuser',
+      username: 'Testuser',
       email: expect.stringMatching(/test\d+@example\.com/) as unknown as string,
     });
 
@@ -52,16 +52,16 @@ describe('UsersService', () => {
     expect(retrievedUser).toBeDefined();
     // Validate retrieved user
     expect(retrievedUser).toMatchObject({
-      name: 'Testuser',
+      username: 'Testuser',
       email: expect.stringMatching(/test\d+@example\.com/) as unknown as string,
     });
 
     // Update user
     const updatedUser = await service.updateUser(user.id, {
-      name: 'UpdateUser',
+      username: 'UpdateUser',
     });
     expect(updatedUser).toBeDefined();
-    expect(updatedUser).toMatchObject({ name: 'UpdateUser' });
+    expect(updatedUser).toMatchObject({ username: 'UpdateUser' });
 
     // Delete user
     await service.deleteUser(user.id);

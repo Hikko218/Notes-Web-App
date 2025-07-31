@@ -32,7 +32,7 @@ describe('NotesService', () => {
     // create user first
     const user = await service['prisma'].user.create({
       data: {
-        name: 'Testuser',
+        username: 'Testuser',
         email: 'test@example.com',
         password: 'secret',
       },
