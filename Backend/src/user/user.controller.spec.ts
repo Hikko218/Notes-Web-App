@@ -28,53 +28,53 @@ describe('UsersController', () => {
     // Create a user for tests
     user = await prisma.user.create({
       data: {
-        name: 'Testuser',
+        username: 'Testuser',
         email: `test${Date.now()}@example.com`, // Dynamic email to avoid unique constraint violations
         password: 'secret',
       },
     });
   });
 
-  it('/users/:id (GET) should return a user', async () => {
-    const res = await request(app.getHttpServer()).get(`/users/${user.id}`);
+  it('/user/:id (GET) should return a user', async () => {
+    const res = await request(app.getHttpServer()).get(`/user/${user.id}`);
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
       id: user.id,
-      name: 'Testuser',
+      username: 'Testuser',
       email: expect.stringMatching(/test\d+@example\.com/) as unknown as string,
     });
   });
 
-  it('/users (POST) should create a user', async () => {
+  it('/user (POST) should create a user', async () => {
     const data = {
-      name: 'New User',
+      username: 'New User',
       email: `user${Date.now()}@example.com`,
       password: 'newpassword',
     };
-    const res = await request(app.getHttpServer()).post('/users').send(data);
+    const res = await request(app.getHttpServer()).post('/user').send(data);
     expect(res.status).toBe(201);
     expect(res.body).toMatchObject({
-      name: 'New User',
+      username: 'New User',
       email: expect.stringMatching(/user\d+@example\.com/) as unknown as string,
     });
   });
 
-  it('/users/:id (PUT) should update a user', async () => {
+  it('/user/:id (PUT) should update a user', async () => {
     const data = {
-      name: 'Updated User',
+      username: 'Updated User',
     };
     const res = await request(app.getHttpServer())
-      .put(`/users/${user.id}`)
+      .put(`/user/${user.id}`)
       .send(data);
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
       id: user.id,
-      name: 'Updated User',
+      username: 'Updated User',
     });
   });
 
-  it('/users/:id (DELETE) should delete a user', async () => {
-    const res = await request(app.getHttpServer()).delete(`/users/${user.id}`);
+  it('/user/:id (DELETE) should delete a user', async () => {
+    const res = await request(app.getHttpServer()).delete(`/user/${user.id}`);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ success: true });
 

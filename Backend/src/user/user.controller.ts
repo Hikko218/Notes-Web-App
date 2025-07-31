@@ -11,20 +11,20 @@ import {
   NotFoundException,
   HttpCode,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 
-@Controller('users')
-export class UsersController {
+@Controller('user')
+export class UserController {
   // eslint-disable-next-line no-unused-vars
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get(':id')
   @HttpCode(200)
   async getUserById(@Param('id') userId: number) {
     try {
-      const user = await this.usersService.getUserbyId(userId);
+      const user = await this.userService.getUserbyId(userId);
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -40,7 +40,7 @@ export class UsersController {
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      const user = await this.usersService.createUser(createUserDto);
+      const user = await this.userService.createUser(createUserDto);
       Logger.log('Successfully created user');
       return user;
     } catch (error) {
@@ -56,7 +56,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     try {
-      const user = await this.usersService.updateUser(userId, updateUserDto);
+      const user = await this.userService.updateUser(userId, updateUserDto);
       Logger.log('Successfully updated user');
       return user;
     } catch (error) {
@@ -69,7 +69,7 @@ export class UsersController {
   @HttpCode(200)
   async deleteUser(@Param('id') userId: number) {
     try {
-      await this.usersService.deleteUser(userId);
+      await this.userService.deleteUser(userId);
       Logger.log('Successfully deleted user');
       return { success: true };
     } catch (error) {
