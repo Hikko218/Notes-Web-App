@@ -28,7 +28,7 @@ describe('NotesService', () => {
     expect(service).toBeDefined();
   });
 
-  it('create, get,delete, and update a note', async () => {
+  it('create, get, delete, and update a note', async () => {
     // create user first
     const user = await service['prisma'].user.create({
       data: {
