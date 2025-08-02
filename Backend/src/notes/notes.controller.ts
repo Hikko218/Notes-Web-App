@@ -20,7 +20,7 @@ export class NotesController {
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly notesService: NotesService) {}
 
-  // GET /notes/:userId
+  // GET /notes/user/:userId
   @Get('user/:userId')
   @HttpCode(200)
   async getAllNotes(@Param('userId') userId: number) {
@@ -29,7 +29,6 @@ export class NotesController {
       if (!notes) {
         throw new NotFoundException('Cant get notes');
       }
-      Logger.log('Successfully retrieved notes');
       return notes;
     } catch (error) {
       Logger.error(`Error retrieving notes for user ${userId}: ${error}`);
@@ -37,8 +36,8 @@ export class NotesController {
     }
   }
 
-  // GET /notes/:noteId
-  @Get(':noteId')
+  // GET /notes/note/:noteId
+  @Get('note/:noteId')
   @HttpCode(200)
   async getNoteById(@Param('noteId') noteId: number) {
     try {
@@ -46,11 +45,28 @@ export class NotesController {
       if (!note) {
         throw new NotFoundException('Cant get note');
       }
-      Logger.log('Successfully retrieved note');
+      Logger.log(`Successfully retrieved note`);
       return note;
     } catch (error) {
       Logger.error(`Error retrieving note ${noteId}: ${error}`);
       throw new NotFoundException('Cant get note');
+    }
+  }
+
+  // GET /notes/folder/:folderId
+  @Get('folder/:folderId')
+  @HttpCode(200)
+  async getNotesByFolder(@Param('folderId') folderId: number) {
+    try {
+      const notes = await this.notesService.getNotesByFolder(Number(folderId));
+      if (!notes) {
+        throw new NotFoundException('Cant get notes for folder');
+      }
+      Logger.log('Successfully retrieved notes for folder');
+      return notes;
+    } catch (error) {
+      Logger.error(`Error retrieving notes for folder ${folderId}: ${error}`);
+      throw new NotFoundException('Cant get notes for folder');
     }
   }
 

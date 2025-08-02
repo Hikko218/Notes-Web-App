@@ -66,9 +66,7 @@ describe('NotesService', () => {
     });
     // delete note
     await service.deleteNote(note.id);
-
-    // get note for user id
-    const noteAfterDelete = await service.getNoteById(note.id);
-    expect(noteAfterDelete).toBeNull();
+    const deletedNote = await service.getNoteById(note.id);
+    expect(deletedNote).toBeNull();
   });
 });

@@ -16,7 +16,7 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     userService = {
-      getUserbyId: jest.fn(),
+      getUserbyEmail: jest.fn(),
       createUser: jest.fn(),
       updateUser: jest.fn(),
       deleteUser: jest.fn(),
@@ -34,31 +34,45 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user if credentials are valid', async () => {
-      const user = { id: 1, username: 'test', password: 'hashed' };
+      const user = {
+        id: 1,
+        username: 'test',
+        email: 'test@mail.com',
+        password: 'hashed',
+      };
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      const result = await authService.validateUser(1, 'pw');
-      expect(result).toEqual({ id: 1, username: 'test' });
+      const result = await authService.validateUser('test@mail.com', 'pw');
+      expect(result).toEqual({
+        id: 1,
+        username: 'test',
+        email: 'test@mail.com',
+      });
     });
 
     it('should return null if user not found', async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      const result = await authService.validateUser(1, 'pw');
+      const result = await authService.validateUser('test@mail.com', 'pw');
       expect(result).toBeNull();
     });
 
     it('should return null if password does not match', async () => {
-      const user = { id: 1, username: 'test', password: 'hashed' };
+      const user = {
+        id: 1,
+        username: 'test',
+        email: 'test@mail.com',
+        password: 'hashed',
+      };
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-      const result = await authService.validateUser(1, 'pw');
+      const result = await authService.validateUser('test@mail.com', 'pw');
       expect(result).toBeNull();
     });
   });
 
   describe('login', () => {
     it('should set cookie and send response', async () => {
-      const user = { id: 1, username: 'test' };
+      const user = { id: 1, username: 'test', email: 'test@mail.com' };
       const cookieMock = jest.fn(() => res);
       const sendMock = jest.fn(() => undefined);
       const res = {
@@ -72,7 +86,10 @@ describe('AuthService', () => {
         'signed-jwt-token',
         expect.objectContaining({ httpOnly: true }),
       );
-      expect(sendMock).toHaveBeenCalledWith({ message: 'Logged in' });
+      expect(sendMock).toHaveBeenCalledWith({
+        message: 'Logged in',
+        userId: user.id,
+      });
     });
   });
 });

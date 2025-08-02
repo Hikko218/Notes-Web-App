@@ -20,18 +20,18 @@ export class UserController {
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
+  @Get(':email')
   @HttpCode(200)
-  async getUserById(@Param('id') userId: number) {
+  async getUserByEmail(@Param('email') email: string) {
     try {
-      const user = await this.userService.getUserbyId(userId);
+      const user = await this.userService.getUserbyEmail(email);
       if (!user) {
         throw new NotFoundException('User not found');
       }
       Logger.log('Successfully retrieved user');
       return user;
     } catch (error) {
-      Logger.error(`Error retrieving user ${userId}: ${error}`);
+      Logger.error(`Error retrieving user ${email}: ${error}`);
       throw new NotFoundException('User not found');
     }
   }
@@ -45,7 +45,7 @@ export class UserController {
       return user;
     } catch (error) {
       Logger.error(`Error creating user: ${error}`);
-      throw new BadRequestException('Cannot create user');
+      throw new BadRequestException('Registration failed!');
     }
   }
 

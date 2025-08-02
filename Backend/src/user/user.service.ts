@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
   // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
-  // Get user by id
-  async getUserbyId(userId: number) {
-    return this.prisma.user.findUnique({ where: { id: Number(userId) } });
+  // Get user by email
+  async getUserbyEmail(email: string) {
+    return this.prisma.user.findUnique({ where: { email: email } });
   }
 
   // Create user
@@ -23,7 +24,11 @@ export class UserService {
         data: { ...data, password: hashedPassword },
       });
     } catch (error) {
-      throw new Error(`Error while hashing password: ${error}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.code === 'P2002') {
+        throw new ConflictException('Email already exists');
+      }
+      throw new BadRequestException('Registration failed');
     }
   }
 

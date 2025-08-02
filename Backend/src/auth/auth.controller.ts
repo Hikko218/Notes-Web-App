@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 
 interface LoginBody {
-  id: number;
+  email: string;
   password: string;
 }
 
@@ -25,7 +25,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() body: LoginBody, @Res() res: Response) {
-    const user = await this.authService.validateUser(body.id, body.password);
+    const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
       return res.status(401).send({ message: 'Invalid credentials' });
     }
@@ -34,9 +34,9 @@ export class AuthController {
 
   // Protected admin route
   @UseGuards(AuthGuard('jwt'))
-  @Get('admin')
-  getAdminData() {
-    return { message: 'Admin confirmed' };
+  @Get('status')
+  getUserStatus() {
+    return { message: 'You are logged in' };
   }
 
   // Logout route

@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { NotesModule } from './notes/notes.module';
 import { UsersModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { FolderModule } from './folder/folder.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     NotesModule,
     UsersModule,
-    AuthModule, // load .env
+    AuthModule,
+    FolderModule,
   ],
 })
 export class AppModule {}
