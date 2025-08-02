@@ -37,8 +37,8 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should call AuthService.validateUser and AuthService.login', async () => {
-      const body = { id: 1, username: 'testuser', password: 'testpassword' };
-      const user = { id: 1, username: 'testuser' };
+      const body = { email: 'test@mail.com', password: 'testpassword' };
+      const user = { id: 1, username: 'testuser', email: 'test@mail.com' };
 
       authService.validateUser.mockResolvedValue(user);
       authService.login.mockImplementation(async () => {
@@ -49,7 +49,7 @@ describe('AuthController', () => {
       await controller.login(body, res);
 
       expect(() =>
-        authService.validateUser(body.id, body.password),
+        authService.validateUser(body.email, body.password),
       ).not.toThrow();
       expect(() => authService.login(user, res)).not.toThrow();
       expect(() => res.cookie('token', expect.any(String))).not.toThrow();
@@ -57,24 +57,24 @@ describe('AuthController', () => {
     });
 
     it('should return 401 if credentials are invalid', async () => {
-      const body = { id: 1, username: 'testuser', password: 'wrongpassword' };
+      const body = { email: 'test@mail.com', password: 'wrongpassword' };
 
       authService.validateUser.mockResolvedValue(null);
 
       await controller.login(body, res);
 
       expect(() =>
-        authService.validateUser(body.id, body.password),
+        authService.validateUser(body.email, body.password),
       ).not.toThrow();
       expect(() => res.status(401)).not.toThrow();
       expect(() => res.send({ message: 'Invalid credentials' })).not.toThrow();
     });
   });
 
-  describe('admin', () => {
+  describe('status', () => {
     it('should return admin confirmation', () => {
-      const result = controller.getAdminData();
-      expect(result).toEqual({ message: 'Admin confirmed' });
+      const result = controller.getUserStatus();
+      expect(result).toEqual({ message: 'You are logged in' });
     });
   });
 

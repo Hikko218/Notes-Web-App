@@ -48,7 +48,7 @@ describe('UsersService', () => {
     });
 
     // Retrieve user
-    const retrievedUser = await service.getUserbyId(user.id);
+    const retrievedUser = await service.getUserbyEmail(user.email);
     expect(retrievedUser).toBeDefined();
     // Validate retrieved user
     expect(retrievedUser).toMatchObject({
@@ -67,7 +67,7 @@ describe('UsersService', () => {
     await service.deleteUser(user.id);
 
     // Check if user deleted
-    const userAfterDelete = await service.getUserbyId(user.id);
+    const userAfterDelete = await service.getUserbyEmail(user.email);
     expect(userAfterDelete).toBeNull();
   });
 });

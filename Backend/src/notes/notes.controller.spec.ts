@@ -61,8 +61,8 @@ describe('NotesController', () => {
     expect(res.body).toEqual({ success: true });
   });
 
-  // Get Note by userId
-  it('/notes/:userId (GET) should return notes', async () => {
+  // Get Notes by userId
+  it('/notes/user/:userId (GET) should return notes', async () => {
     const res = await request(app.getHttpServer()).get(
       `/notes/user/${user.id}`,
     );
@@ -88,8 +88,10 @@ describe('NotesController', () => {
   });
 
   // Get Note by noteId
-  it('/notes/:noteId (GET) should return note', async () => {
-    const res = await request(app.getHttpServer()).get(`/notes/${note.id}`);
+  it('/notes/note/:noteId (GET) should return note', async () => {
+    const res = await request(app.getHttpServer()).get(
+      `/notes/note/${note.id}`,
+    );
     const noteRes = res.body as Note;
     expect(res.status).toBe(200);
     expect(noteRes.id).toBe(note.id);
@@ -110,7 +112,9 @@ describe('NotesController', () => {
   // Delete note
   it('/notes/:noteId (DELETE) should delete note', async () => {
     await request(app.getHttpServer()).delete(`/notes/${note.id}`);
-    const res = await request(app.getHttpServer()).get(`/notes/${note.id}`);
+    const res = await request(app.getHttpServer()).get(
+      `/notes/note/${note.id}`,
+    );
     expect(res.status).toBe(404);
   });
 

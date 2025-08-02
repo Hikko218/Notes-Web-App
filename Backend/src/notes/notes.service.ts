@@ -9,13 +9,20 @@ export class NotesService {
 
   // get all notes by user id
   async getAllNotes(userId: number) {
-    return this.prisma.note.findMany({ where: { userId } });
+    return this.prisma.note.findMany({ where: { userId: userId } });
   }
 
-  // get note by user id and note id
+  // get single note by note id
   async getNoteById(noteId: number) {
-    return this.prisma.note.findFirst({
+    return this.prisma.note.findUnique({
       where: { id: noteId },
+    });
+  }
+
+  // get all notes by folder id
+  async getNotesByFolder(folderId: number) {
+    return this.prisma.note.findMany({
+      where: { folderId: folderId },
     });
   }
 

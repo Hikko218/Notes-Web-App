@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 interface AuthUser {
+  email: string;
   id: number;
   username: string;
 }
@@ -20,16 +21,19 @@ export class AuthService {
   ) {}
 
   // Validate user credentials (replace with your real user lookup)
-  async validateUser(id: number, password: string): Promise<AuthUser | null> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<AuthUser | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id },
+      where: { email },
     });
     if (!user) return null;
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return null;
 
-    return { id: user.id, username: user.username };
+    return { id: user.id, username: user.username, email: user.email };
   }
 
   // Login: set JWT cookie
@@ -43,6 +47,6 @@ export class AuthService {
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.send({ message: 'Logged in' });
+    res.send({ message: 'Logged in', userId: user.id });
   }
 }

@@ -36,7 +36,7 @@ describe('UsersController', () => {
   });
 
   it('/user/:id (GET) should return a user', async () => {
-    const res = await request(app.getHttpServer()).get(`/user/${user.id}`);
+    const res = await request(app.getHttpServer()).get(`/user/${user.email}`);
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
       id: user.id,
@@ -79,7 +79,7 @@ describe('UsersController', () => {
     expect(res.body).toEqual({ success: true });
 
     const deletedUser = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { email: user.email },
     });
     expect(deletedUser).toBeNull();
   });
