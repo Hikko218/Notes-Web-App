@@ -1,5 +1,11 @@
-// Footer component for the site
+"use client";
+import { useAuth } from "@/components/useAuthStatus";
+
 export default function Footer() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) return null;
+
   return (
     <footer className="flex gap-[24px] flex-wrap items-center justify-center bg-black/40 backdrop-blur-sm ">
       {/* Copyright and author info */}

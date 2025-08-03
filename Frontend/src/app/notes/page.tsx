@@ -1,28 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/useAuthStatus";
-import { CirclePlus } from "lucide-react";
+import { NotesSection } from "@/components/NotesSection";
 
 const URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface Note {
-  id: number;
-  title: string;
-  content: string;
-  updatedAt: string;
-}
 
 interface SavedNote {
   id: number;
   title: string;
   content: string;
   updatedAt: string;
-  userId: string;
+  userId: number;
+  folderId: number;
+  deleted: boolean;
 }
 
 export default function NotesPage() {
+  const [folders, setFolders] = useState<{ id: number; name: string }[]>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
   const [notes, setNotes] = useState<SavedNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,22 +27,34 @@ export default function NotesPage() {
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const router = useRouter();
 
   const { userId, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated === false) {
-      router.push("/");
+  // Folder-Fetch Funktion für Wiederverwendung
+  const fetchFolders = useCallback(async () => {
+    try {
+      const res = await fetch(`${URL}/folder/user/${userId}`);
+      if (!res.ok) throw new Error("Failed to fetch folders");
+      const data = await res.json();
+      setFolders(data);
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
     }
-  }, [isAuthenticated, router]);
+  }, [userId]);
 
+  // Check if authenticated and fetch notes & folders
   useEffect(() => {
-    if (!userId) {
-      setError("User not logged in.");
-      setLoading(false);
+    if (isAuthenticated === null || isAuthenticated === undefined) {
+      setLoading(true);
       return;
     }
+    if (isAuthenticated === false) {
+      router.push("/");
+      return;
+    }
+    // Fetch notes
     fetch(`${URL}/notes/user/${userId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch notes");
@@ -59,122 +68,124 @@ export default function NotesPage() {
         setError(err.message);
         setLoading(false);
       });
-  }, [userId]);
+    // Fetch folders
+    fetchFolders();
+  }, [isAuthenticated, router, userId, fetchFolders]);
 
+  // Handle add notes input
   const handleAddNote = () => {
     setShowNewNote(true);
     setNewTitle("");
     setNewContent("");
   };
 
+  // Handle safe notes
   const handleSaveNote = async () => {
     if (!newTitle.trim() && !newContent.trim()) return;
     setSaving(true);
     try {
+      const body: Partial<SavedNote> = {
+        title: newTitle,
+        content: newContent,
+        userId: Number(userId),
+        deleted: false,
+      };
+      if (selectedFolderId !== null) {
+        body.folderId = selectedFolderId;
+      }
+
       const res = await fetch(`${URL}/notes`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        const notesRes = await fetch(`${URL}/notes/user/${userId}`);
+        if (notesRes.ok) {
+          setNotes(await notesRes.json());
+          setShowNewNote(false);
+          setNewTitle("");
+          setNewContent("");
+        } else {
+          setError("Failed to fetch notes after save");
+        }
+      } else {
+        setError("Failed to save note");
+      }
+    } catch {
+      setError("An error occurred while saving.");
+    }
+    setSaving(false);
+  };
+
+  // Handle edit delete note
+  const handleEditSave = async (id: number, title: string, content: string) => {
+    setSaving(true);
+    try {
+      await fetch(`${URL}/notes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: newTitle,
-          content: newContent,
+          title,
+          content,
           userId: Number(userId),
-          deleted: true,
+          deleted: false,
         }),
       });
-      if (!res.ok) throw new Error("Failed to save note");
+      // Refetch notes
       const notesRes = await fetch(`${URL}/notes/user/${userId}`);
-      if (!notesRes.ok) throw new Error("Failed to fetch notes after save");
       const notesData = await notesRes.json();
       setNotes(notesData);
-      setShowNewNote(false);
-      setNewTitle("");
-      setNewContent("");
-    } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Unknown error");
-      setTimeout(() => setError(null), 2000);
+      setEditingNoteId(null);
+    } catch {
+      setError("An error occurred while editing.");
     } finally {
       setSaving(false);
     }
   };
 
+  // Handle soft delete note
+  const handleDeleteNote = async (noteId: number) => {
+    try {
+      await fetch(`${URL}/notes/softDelete/${noteId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deleted: true,
+        }),
+      });
+      // Refetch notes
+      const notesRes = await fetch(`${URL}/notes/user/${userId}`);
+      const notesData = await notesRes.json();
+      setNotes(notesData);
+    } catch {
+      setError("An error occurred while deleting.");
+    }
+  };
+
   return (
-    <section className="relative min-h-screen max-w-3xl mx-auto py-8 px-4 mt-16">
-      <h1 className="text-3xl font-bold text-yellow-500 mb-6 text-center">
-        Your Notes
-      </h1>
-      {loading && (
-        <div className="text-center text-white pt-8">Loading notes...</div>
-      )}
-      {error && <div className="text-center text-red-400 pt-8">{error}</div>}
-      {showNewNote && (
-        <div className="bg-black/60 max-w-90 rounded-lg p-4 mb-4 shadow">
-          <input
-            className="w-full mb-2 px-2 py-1 rounded bg-gray-800 text-yellow-400 placeholder-gray-500"
-            placeholder="Title"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            disabled={saving}
-          />
-          <textarea
-            className="w-full mb-2 px-2 py-1 rounded bg-gray-800 text-white placeholder-gray-500"
-            placeholder="Content"
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            rows={4}
-            disabled={saving}
-          />
-          <div className="flex gap-2 justify-end">
-            <button
-              className="px-4 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600"
-              onClick={handleSaveNote}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-            <button
-              className="px-4 py-1 rounded bg-gray-700 text-white hover:bg-gray-800"
-              onClick={() => setShowNewNote(false)}
-              disabled={saving}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-      {!loading &&
-        !error &&
-        (notes.length === 0 ? (
-          <div className="text-white text-center">No notes found.</div>
-        ) : (
-          <div className="space-y-4 grid grid-cols-2 gap-6">
-            {notes.map((note: Note) => (
-              <div
-                key={note.id}
-                className="bg-gray-800 rounded-lg p-4 max-w-90 h-50 shadow"
-              >
-                <h2 className="text-xl font-semibold text-yellow-400 mb-2">
-                  {note.title}
-                </h2>
-                <p className="text-white mb-2">{note.content}</p>
-                <div className="text-xs text-gray-400 ">
-                  Last updated:{" "}
-                  {note.updatedAt
-                    ? new Date(note.updatedAt).toLocaleString()
-                    : "-"}
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      <button
-        className="text-yellow-500 hover:text-yellow-600 mt-6"
-        onClick={handleAddNote}
-      >
-        <CirclePlus size={46} />{" "}
-      </button>
-    </section>
+    <NotesSection
+      notes={notes}
+      folders={folders}
+      selectedFolderId={selectedFolderId}
+      setSelectedFolderId={setSelectedFolderId}
+      loading={loading}
+      error={error}
+      showNewNote={showNewNote}
+      newTitle={newTitle}
+      newContent={newContent}
+      saving={saving}
+      editingNoteId={editingNoteId}
+      handleAddNote={handleAddNote}
+      handleSaveNote={handleSaveNote}
+      handleEditSave={handleEditSave}
+      handleDeleteNote={handleDeleteNote}
+      setNewTitle={setNewTitle}
+      setNewContent={setNewContent}
+      setShowNewNote={setShowNewNote}
+      setEditingNoteId={setEditingNoteId}
+      fetchFolders={fetchFolders}
+      title="Your Notes"
+    />
   );
 }
