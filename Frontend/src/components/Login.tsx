@@ -51,14 +51,11 @@ export default function HeroLogin() {
     });
     if (res.ok) {
       const data = await res.json();
-      console.log(data)
       localStorage.setItem("userId", data.userId);
       setForm({ email: "", password: "" });
       setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        router.push("/notes");
-      }, 2000);
+      router.push("/notes");
+      setTimeout(() => setSuccess(false), 2000);
     }
     if (!res.ok) {
       setError("Login failed!");

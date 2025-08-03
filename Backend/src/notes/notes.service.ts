@@ -7,9 +7,20 @@ export class NotesService {
   // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
-  // get all notes by user id
+  // get all notes by user id deleted false
   async getAllNotes(userId: number) {
-    return this.prisma.note.findMany({ where: { userId: userId } });
+    return this.prisma.note.findMany({
+      where: { userId: userId, deleted: false },
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  // get all notes by user id deleted true
+  async getAllDelNotes(userId: number) {
+    return this.prisma.note.findMany({
+      where: { userId: userId, deleted: true },
+      orderBy: { id: 'asc' },
+    });
   }
 
   // get single note by note id

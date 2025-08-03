@@ -36,6 +36,22 @@ export class NotesController {
     }
   }
 
+  // GET /notes/user/:userId
+  @Get('deleted/:userId')
+  @HttpCode(200)
+  async getAllDelNotes(@Param('userId') userId: number) {
+    try {
+      const notes = await this.notesService.getAllDelNotes(Number(userId));
+      if (!notes) {
+        throw new NotFoundException('Cant get notes');
+      }
+      return notes;
+    } catch (error) {
+      Logger.error(`Error retrieving notes for user ${userId}: ${error}`);
+      throw new NotFoundException('Cant get notes');
+    }
+  }
+
   // GET /notes/note/:noteId
   @Get('note/:noteId')
   @HttpCode(200)

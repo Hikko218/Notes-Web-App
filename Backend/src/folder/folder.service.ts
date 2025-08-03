@@ -19,6 +19,7 @@ export class FolderService {
     return this.prisma.folder.findMany({
       where: { userId: Number(userId) },
       include: { notes: true },
+      orderBy: { id: 'asc' },
     });
   }
 

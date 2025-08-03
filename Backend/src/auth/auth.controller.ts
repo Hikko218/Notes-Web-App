@@ -16,6 +16,15 @@ interface LoginBody {
   password: string;
 }
 
+interface User {
+  userId: number;
+  username: string;
+}
+
+interface AuthenticatedRequest extends Request {
+  user?: User;
+}
+
 @Controller('auth')
 export class AuthController {
   // eslint-disable-next-line no-unused-vars
@@ -35,8 +44,14 @@ export class AuthController {
   // Protected admin route
   @UseGuards(AuthGuard('jwt'))
   @Get('status')
-  getUserStatus() {
-    return { message: 'You are logged in' };
+  getUserStatus(@Res() res: Response) {
+    const req = res.req as unknown as AuthenticatedRequest;
+    const user = req.user;
+    return res.send({
+      isAuthenticated: !!user,
+      userId: user?.userId ?? null,
+      username: user?.username ?? null,
+    });
   }
 
   // Logout route

@@ -25,7 +25,7 @@ async function bootstrap() {
     '/auth',
     rateLimit({
       windowMs: 60 * 1000, //
-      max: 10,
+      max: 60,
     }),
   );
   await app.listen(process.env.PORT ?? 3000);

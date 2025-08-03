@@ -4,14 +4,16 @@ import Link from "next/link";
 import { CircleUserRound } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/useAuthStatus";
 
 const URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Header() {
+  const { isAuthenticated } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Call router
   const router = useRouter();
+
+  if (!isAuthenticated) return null;
 
   const handleLogout = async () => {
     const res = await fetch(`${URL}/auth/logout`, {
@@ -20,10 +22,11 @@ export default function Header() {
     });
     if (res.ok) {
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       localStorage.removeItem("userId");
       setMenuOpen(false);
       router.push("/");
+      router.refresh();
     }
   };
 
@@ -40,12 +43,6 @@ export default function Header() {
           className="text-white hover:text-yellow-500 font-semibold transition"
         >
           Notes
-        </Link>
-        <Link
-          href="/lists"
-          className="text-white hover:text-yellow-500 font-semibold transition"
-        >
-          Lists
         </Link>
         <Link
           href="/trash"
@@ -69,16 +66,16 @@ export default function Header() {
         </button>
       </div>
       {menuOpen && (
-        <div className="absolute right-0 top-full bg-black/40 rounded shadow-lg py-2 px-4 flex flex-col min-w-[140px] z-10 backdrop-blur-sm">
+        <div className="absolute right-0 top-full bg-black/40 rounded shadow-lg py-2 px-4 flex flex-col min-w-[140px] z-50 backdrop-blur-sm">
           <Link
             href="/profile"
-            className="text-white py-2 px-2 hover:bg-yellow-500 rounded transition"
+            className="text-white py-2 px-2 hover:text-yellow-500 rounded transition"
             onClick={() => setMenuOpen(false)}
           >
             Profile
           </Link>
           <button
-            className="text-white py-2 px-2 hover:bg-yellow-500 rounded text-left transition"
+            className="text-white py-2 px-2 hover:text-red-500 rounded text-left transition"
             onClick={() => {
               handleLogout();
             }}

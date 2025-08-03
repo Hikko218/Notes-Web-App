@@ -72,9 +72,31 @@ describe('AuthController', () => {
   });
 
   describe('status', () => {
-    it('should return admin confirmation', () => {
-      const result = controller.getUserStatus();
-      expect(result).toEqual({ message: 'You are logged in' });
+    it('should return user status with authentication info', () => {
+      // Mock user
+      const mockUser = { userId: 1, username: 'testuser' };
+      // Mock req in res
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      (res as any).req = { user: mockUser };
+      const result = controller.getUserStatus(res);
+      expect(result).toBeUndefined(); // Da res.send verwendet wird
+      expect(res.send).toHaveBeenCalledWith({
+        isAuthenticated: true,
+        userId: 1,
+        username: 'testuser',
+      });
+    });
+
+    it('should return unauthenticated status if no user', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      (res as any).req = {};
+      const result = controller.getUserStatus(res);
+      expect(result).toBeUndefined();
+      expect(res.send).toHaveBeenCalledWith({
+        isAuthenticated: false,
+        userId: null,
+        username: null,
+      });
     });
   });
 
