@@ -17,10 +17,11 @@ import { HttpCode } from '@nestjs/common';
 
 @Controller('notes')
 export class NotesController {
+  // Service injection
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly notesService: NotesService) {}
 
-  // GET /notes/user/:userId
+  // GET /notes/user/:userId: Get all notes for user
   @Get('user/:userId')
   @HttpCode(200)
   async getAllNotes(@Param('userId') userId: number) {
@@ -36,7 +37,7 @@ export class NotesController {
     }
   }
 
-  // GET /notes/user/:userId
+  // GET /notes/deleted/:userId: Get all deleted notes for user
   @Get('deleted/:userId')
   @HttpCode(200)
   async getAllDelNotes(@Param('userId') userId: number) {
@@ -52,7 +53,7 @@ export class NotesController {
     }
   }
 
-  // GET /notes/note/:noteId
+  // GET /notes/note/:noteId: Get note by ID
   @Get('note/:noteId')
   @HttpCode(200)
   async getNoteById(@Param('noteId') noteId: number) {

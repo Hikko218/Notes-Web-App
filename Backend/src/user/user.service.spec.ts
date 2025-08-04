@@ -12,6 +12,7 @@ beforeAll(() => {
 describe('UsersService', () => {
   let service: UserService;
 
+  // Unit tests for UserService (user management logic)
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [UserService, PrismaService],

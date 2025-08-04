@@ -15,12 +15,15 @@ export default function Header() {
 
   if (!isAuthenticated) return null;
 
+  // Handles user logout
   const handleLogout = async () => {
+    // Send POST request to backend to log out
     const res = await fetch(`${URL}/auth/logout`, {
       method: "POST",
-      credentials: "include",
+      credentials: "include", // Include cookies for session
     });
     if (res.ok) {
+      // On successful logout, clear local storage and redirect
       const data = await res.json();
       console.log(data);
       localStorage.removeItem("userId");

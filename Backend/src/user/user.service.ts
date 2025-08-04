@@ -8,6 +8,7 @@ import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
+  // Inject Prisma service
   // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
@@ -16,7 +17,12 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { email: email } });
   }
 
-  // Create user
+  // Get user by id
+  async getUserbyId(userId: number) {
+    return this.prisma.user.findUnique({ where: { id: Number(userId) } });
+  }
+
+  // Create user with hashed password
   async createUser(data: CreateUserDto) {
     try {
       const hashedPassword: string = await bcrypt.hash(data.password, 10);
@@ -32,7 +38,7 @@ export class UserService {
     }
   }
 
-  // Update user
+  // Update user info
   async updateUser(userId: number, data: UpdateUserDto) {
     try {
       // Fetch the existing user

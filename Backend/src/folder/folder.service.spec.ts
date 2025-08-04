@@ -12,6 +12,7 @@ beforeAll(() => {
 describe('FolderService', () => {
   let service: FolderService;
 
+  // Unit tests for FolderService (folder CRUD operations)
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [FolderService, PrismaService],

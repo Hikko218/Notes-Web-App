@@ -4,11 +4,14 @@ import { AuthService } from './auth.service';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { Response } from 'express';
 
+// Tests for AuthController (authentication endpoints)
 describe('AuthController', () => {
+  // Unit tests for AuthController (authentication routes)
   let controller: AuthController;
   let authService: DeepMockProxy<AuthService>;
   let res: Response;
 
+  // Setup mocks and controller before each test
   beforeEach(async () => {
     authService = mockDeep<AuthService>();
     res = {
@@ -31,11 +34,14 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(AuthController);
   });
 
+  // Controller should be created
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
+  // Login endpoint tests
   describe('login', () => {
+    // Should validate user and log in
     it('should call AuthService.validateUser and AuthService.login', async () => {
       const body = { email: 'test@mail.com', password: 'testpassword' };
       const user = { id: 1, username: 'testuser', email: 'test@mail.com' };
@@ -56,6 +62,7 @@ describe('AuthController', () => {
       expect(() => res.send({ message: 'Logged in' })).not.toThrow();
     });
 
+    // Should return 401 for invalid credentials
     it('should return 401 if credentials are invalid', async () => {
       const body = { email: 'test@mail.com', password: 'wrongpassword' };
 
@@ -71,7 +78,9 @@ describe('AuthController', () => {
     });
   });
 
+  // Status endpoint tests
   describe('status', () => {
+    // Should return authenticated user status
     it('should return user status with authentication info', () => {
       // Mock user
       const mockUser = { userId: 1, username: 'testuser' };
@@ -87,6 +96,7 @@ describe('AuthController', () => {
       });
     });
 
+    // Should return unauthenticated status if no user
     it('should return unauthenticated status if no user', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       (res as any).req = {};
@@ -100,7 +110,9 @@ describe('AuthController', () => {
     });
   });
 
+  // Logout endpoint tests
   describe('logout', () => {
+    // Should clear cookie and send logout response
     it('should clear the token cookie and send a response', () => {
       controller.logout(res);
       expect(() =>

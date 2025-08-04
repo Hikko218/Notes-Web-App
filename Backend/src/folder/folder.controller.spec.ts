@@ -8,6 +8,7 @@ import { Folder } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 describe('FolderController', () => {
+  // Unit tests for FolderController (folder routes)
   let app: INestApplication;
   let user: User;
   let prisma: PrismaService;
