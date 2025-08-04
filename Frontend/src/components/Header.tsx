@@ -12,8 +12,9 @@ export default function Header() {
   const { isAuthenticated } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+  const [loggedOut, setLoggedOut] = useState(false);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || loggedOut) return null;
 
   // Handles user logout
   const handleLogout = async () => {
@@ -28,8 +29,8 @@ export default function Header() {
       console.log(data);
       localStorage.removeItem("userId");
       setMenuOpen(false);
+      setLoggedOut(true);
       router.push("/");
-      router.refresh();
     }
   };
 

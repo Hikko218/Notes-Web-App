@@ -1,11 +1,11 @@
-import { IsString, IsBoolean, IsInt, IsObject } from 'class-validator';
+import { IsString, IsBoolean, IsInt } from 'class-validator';
 
 export class CreateNoteDto {
   @IsString()
   title: string;
 
-  @IsObject()
-  content: any;
+  @IsString()
+  content: string;
 
   @IsBoolean()
   deleted: boolean;
