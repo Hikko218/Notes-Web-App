@@ -32,5 +32,5 @@ COPY --from=builder /app/node_modules ./node_modules
 # Expose port (change if your app uses a different port)
 EXPOSE 3000
 
-# Start the app
-CMD ["npm", "run", "start:prod"]
+# Start the app and ensure Prisma client is generated
+CMD ["sh", "-c", "npx prisma generate && npm run start:prod"]
