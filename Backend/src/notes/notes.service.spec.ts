@@ -57,12 +57,12 @@ describe('NotesService', () => {
     // update note
     const updatedNotes = await service.updateNote(note.id, {
       title: 'Test 2',
-      content: { text: 'Test 2' },
+      content: 'Test 2',
       deleted: false,
     });
     expect(updatedNotes).toMatchObject({
       title: 'Test 2',
-      content: { text: 'Test 2' },
+      content: 'Test 2',
       deleted: false,
     });
     // delete note
