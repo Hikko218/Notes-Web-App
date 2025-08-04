@@ -14,13 +14,14 @@ interface AuthUser {
 
 @Injectable()
 export class AuthService {
+  // Inject JWT, user, and Prisma services
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
     private prisma: PrismaService,
   ) {}
 
-  // Validate user credentials (replace with your real user lookup)
+  // Validate user credentials
   async validateUser(
     email: string,
     password: string,
@@ -36,7 +37,7 @@ export class AuthService {
     return { id: user.id, username: user.username, email: user.email };
   }
 
-  // Login: set JWT cookie
+  // Login: set JWT cookie and send response
   async login(user: AuthUser, res: Response) {
     const payload = { username: user.username, sub: user.id };
     const token = this.jwtService.sign(payload);

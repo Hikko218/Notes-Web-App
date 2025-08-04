@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 describe('AppController', () => {
+  // Unit tests for AppController (root route)
   let appController: AppController;
 
   beforeEach(async () => {

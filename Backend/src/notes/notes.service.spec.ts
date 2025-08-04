@@ -12,6 +12,7 @@ beforeAll(() => {
 describe('NotesService', () => {
   let service: NotesService;
 
+  // Unit tests for NotesService (note CRUD operations)
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [NotesService, PrismaService],

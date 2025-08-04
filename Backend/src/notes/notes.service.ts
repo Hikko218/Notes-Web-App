@@ -4,10 +4,11 @@ import { UpdateNoteDto } from './dto/update.note.dto';
 
 @Injectable()
 export class NotesService {
+  // Inject Prisma service
   // eslint-disable-next-line no-unused-vars
   constructor(private prisma: PrismaService) {}
 
-  // get all notes by user id deleted false
+  // Get all notes for user (not deleted)
   async getAllNotes(userId: number) {
     return this.prisma.note.findMany({
       where: { userId: userId, deleted: false },
@@ -15,7 +16,7 @@ export class NotesService {
     });
   }
 
-  // get all notes by user id deleted true
+  // Get all deleted notes for user
   async getAllDelNotes(userId: number) {
     return this.prisma.note.findMany({
       where: { userId: userId, deleted: true },
@@ -23,21 +24,21 @@ export class NotesService {
     });
   }
 
-  // get single note by note id
+  // Get single note by note id
   async getNoteById(noteId: number) {
     return this.prisma.note.findUnique({
       where: { id: noteId },
     });
   }
 
-  // get all notes by folder id
+  // Get all notes by folder id
   async getNotesByFolder(folderId: number) {
     return this.prisma.note.findMany({
       where: { folderId: folderId },
     });
   }
 
-  // create note for user
+  // Create note for user
   async createNote(data: {
     title: string;
     content: any;
@@ -49,7 +50,7 @@ export class NotesService {
     });
   }
 
-  // update note for user
+  // Update note for user
   async updateNote(noteId: number, data: UpdateNoteDto) {
     return await this.prisma.note.update({
       where: { id: noteId },
@@ -57,7 +58,7 @@ export class NotesService {
     });
   }
 
-  // delete note
+  // Delete note
   async deleteNote(noteId: number) {
     return await this.prisma.note.delete({
       where: { id: noteId },

@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 
 describe('UsersController', () => {
+  // Unit tests for UsersController (user routes)
   let app: INestApplication;
   let prisma: PrismaService;
   let user: User;

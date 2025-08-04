@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 const URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -65,63 +66,76 @@ export default function HeroLogin() {
 
   return (
     <section className="relative flex flex-col items-center  justify-center min-h-screen text-center px-4">
-      <div className="mb-8">
-        <Image
-          src="/file.svg"
-          alt="Notes Logo"
-          width={64}
-          height={64}
-          className="mx-auto mb-4"
-        />
-        <h1 className="text-4xl md:text-5xl font-bold text-yellow-500 mb-2">
-          Welcome to Notes Web App
-        </h1>
-        <p className="text-lg text-white mb-6">
-          Organize your thoughts, ideas and tasks in one place.
-        </p>
-      </div>
-      <form
-        className="bg-black/60 rounded-2xl shadow-lg p-8 w-full max-w-md flex flex-col gap-4 backdrop-blur-sm"
-        onSubmit={handleSubmit}
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full flex flex-col items-center"
       >
-        <input
-          id="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          type="email"
-          placeholder="Email"
-          className="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-        />
-        <input
-          id="password"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-          type="password"
-          placeholder="Password"
-          className="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-        />
-        <button
-          type="submit"
-          className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded transition"
+        <div className="mb-8">
+          <Image
+            src="/file.svg"
+            alt="Notes Logo"
+            width={64}
+            height={64}
+            className="mx-auto mb-4"
+          />
+          <h1 className="text-4xl md:text-5xl font-bold text-yellow-500 mb-2">
+            Welcome to Notes Web App
+          </h1>
+          <p className="text-lg text-white mb-6">
+            Organize your thoughts, ideas and tasks in one place.
+          </p>
+        </div>
+        {/* Login form */}
+        <form
+          className="bg-black/60 rounded-2xl shadow-lg p-8 w-full max-w-md flex flex-col gap-4 backdrop-blur-sm"
+          onSubmit={handleSubmit}
         >
-          Login
-        </button>
-        {success && (
-          <div className="text-green-400 pt-2">Login successful!</div>
-        )}
-        {error && <div className="text-red-400 pt-2">{error}</div>}
-      </form>
-      <p className="mt-6 text-white text-sm">
-        Don&apos;t have an account?{" "}
-        <Link
-          href="/register"
-          className="text-yellow-500 hover:text-yellow-600 font-semibold transition"
-        >
-          Sing up
-        </Link>
-      </p>
+          {/* Email input field */}
+          <input
+            id="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            type="email"
+            placeholder="Email"
+            className="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          />
+          {/* Password input field */}
+          <input
+            id="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            type="password"
+            placeholder="Password"
+            className="px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          />
+          {/* Login button */}
+          <button
+            type="submit"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded transition"
+          >
+            Login
+          </button>
+          {/* Show success message */}
+          {success && (
+            <div className="text-green-400 pt-2">Login successful!</div>
+          )}
+          {/* Show error message */}
+          {error && <div className="text-red-400 pt-2">{error}</div>}
+        </form>
+        <p className="mt-6 text-white text-sm">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-yellow-500 hover:text-yellow-600 font-semibold transition"
+          >
+            Sing up
+          </Link>
+        </p>
+      </motion.div>
     </section>
   );
 }

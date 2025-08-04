@@ -14,6 +14,7 @@ describe('AuthService', () => {
   let jwtService: { sign: jest.Mock };
   let userService: Partial<UserService>;
 
+  // Unit tests for AuthService (authentication logic)
   beforeEach(() => {
     userService = {
       getUserbyEmail: jest.fn(),

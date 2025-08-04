@@ -18,21 +18,33 @@ interface SavedNote {
 }
 
 export default function NotesPage() {
+  // State for storing folders
   const [folders, setFolders] = useState<{ id: number; name: string }[]>([]);
+  // State for currently selected folder
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
+  // State for storing notes
   const [notes, setNotes] = useState<SavedNote[]>([]);
+  // Loading state for async operations
   const [loading, setLoading] = useState(true);
+  // Error state for displaying errors
   const [error, setError] = useState<string | null>(null);
+  // State to show/hide new note form
   const [showNewNote, setShowNewNote] = useState(false);
+  // State for new note title
   const [newTitle, setNewTitle] = useState("");
+  // State for new note content
   const [newContent, setNewContent] = useState("");
+  // State to indicate saving in progress
   const [saving, setSaving] = useState(false);
+  // State for currently editing note id
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
+  // Next.js router for navigation
   const router = useRouter();
 
+  // Get userId and authentication status from custom hook
   const { userId, isAuthenticated } = useAuth();
 
-  // Folder-Fetch Funktion für Wiederverwendung
+  // Fetch folders for the current user
   const fetchFolders = useCallback(async () => {
     try {
       const res = await fetch(`${URL}/folder/user/${userId}`);
@@ -44,17 +56,19 @@ export default function NotesPage() {
     }
   }, [userId]);
 
-  // Check if authenticated and fetch notes & folders
+  // Effect: Check authentication and fetch notes & folders on mount or when auth changes
   useEffect(() => {
+    // If authentication status is not determined, show loading
     if (isAuthenticated === null || isAuthenticated === undefined) {
       setLoading(true);
       return;
     }
+    // If not authenticated, redirect to home page
     if (isAuthenticated === false) {
       router.push("/");
       return;
     }
-    // Fetch notes
+    // Fetch notes for the user
     fetch(`${URL}/notes/user/${userId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch notes");
@@ -68,37 +82,41 @@ export default function NotesPage() {
         setError(err.message);
         setLoading(false);
       });
-    // Fetch folders
+    // Fetch folders for the user
     fetchFolders();
   }, [isAuthenticated, router, userId, fetchFolders]);
 
-  // Handle add notes input
+  // Show new note input form and reset fields
   const handleAddNote = () => {
     setShowNewNote(true);
     setNewTitle("");
     setNewContent("");
   };
 
-  // Handle safe notes
+  // Save a new note to the backend
   const handleSaveNote = async () => {
+    // Prevent saving if both title and content are empty
     if (!newTitle.trim() && !newContent.trim()) return;
     setSaving(true);
     try {
+      // Prepare note data
       const body: Partial<SavedNote> = {
         title: newTitle,
         content: newContent,
         userId: Number(userId),
         deleted: false,
       };
+      // Add folderId if a folder is selected
       if (selectedFolderId !== null) {
         body.folderId = selectedFolderId;
       }
-
+      // Send POST request to create note
       const res = await fetch(`${URL}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      // Reload notes after saving
       if (res.ok) {
         const notesRes = await fetch(`${URL}/notes/user/${userId}`);
         if (notesRes.ok) {
@@ -118,10 +136,11 @@ export default function NotesPage() {
     setSaving(false);
   };
 
-  // Handle edit delete note
+  // Save edits to an existing note
   const handleEditSave = async (id: number, title: string, content: string) => {
     setSaving(true);
     try {
+      // Send PUT request to update note
       await fetch(`${URL}/notes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -132,7 +151,7 @@ export default function NotesPage() {
           deleted: false,
         }),
       });
-      // Refetch notes
+      // Refetch notes after editing
       const notesRes = await fetch(`${URL}/notes/user/${userId}`);
       const notesData = await notesRes.json();
       setNotes(notesData);
@@ -144,9 +163,10 @@ export default function NotesPage() {
     }
   };
 
-  // Handle soft delete note
+  // Soft delete a note (mark as deleted)
   const handleDeleteNote = async (noteId: number) => {
     try {
+      // Send PUT request to mark note as deleted
       await fetch(`${URL}/notes/softDelete/${noteId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -154,7 +174,7 @@ export default function NotesPage() {
           deleted: true,
         }),
       });
-      // Refetch notes
+      // Refetch notes after deletion
       const notesRes = await fetch(`${URL}/notes/user/${userId}`);
       const notesData = await notesRes.json();
       setNotes(notesData);
@@ -163,6 +183,7 @@ export default function NotesPage() {
     }
   };
 
+  // Render NotesSection component with all props and handlers
   return (
     <NotesSection
       notes={notes}

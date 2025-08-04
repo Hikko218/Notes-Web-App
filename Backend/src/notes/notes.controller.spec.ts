@@ -8,6 +8,7 @@ import { Note } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 describe('NotesController', () => {
+  // Unit tests for NotesController (note routes)
   let app: INestApplication;
   let user: User;
   let prisma: PrismaService;

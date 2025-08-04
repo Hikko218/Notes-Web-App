@@ -17,9 +17,11 @@ import { UpdateUserDto } from './dto/update.user.dto';
 
 @Controller('user')
 export class UserController {
+  // Service injection
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly userService: UserService) {}
 
+  // GET /user/:email: Get user by email
   @Get(':email')
   @HttpCode(200)
   async getUserByEmail(@Param('email') email: string) {
@@ -36,6 +38,24 @@ export class UserController {
     }
   }
 
+  // GET /user/id/:userId: Get user by ID
+  @Get('id/:userId')
+  @HttpCode(200)
+  async getUserById(@Param('userId') userId: number) {
+    try {
+      const user = await this.userService.getUserbyId(userId);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      Logger.log('Successfully retrieved user');
+      return user;
+    } catch (error) {
+      Logger.error(`Error retrieving user ${userId}: ${error}`);
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  // POST /user: Create new user
   @Post()
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {

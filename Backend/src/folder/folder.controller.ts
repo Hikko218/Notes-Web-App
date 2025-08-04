@@ -16,9 +16,11 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 export class FolderController {
   private readonly logger = new Logger(FolderController.name);
 
+  // Service injection
   // eslint-disable-next-line no-unused-vars
   constructor(private readonly folderService: FolderService) {}
 
+  // POST /folder: Create new folder
   @Post()
   @HttpCode(201)
   async createFolder(@Body() body: { userId: number; name: string }) {
@@ -33,6 +35,7 @@ export class FolderController {
     }
   }
 
+  // GET /folder/user/:userId: Get folders for user
   @Get('/user/:userId')
   @HttpCode(200)
   async getFoldersByUser(@Param('userId') userId: number) {
@@ -46,6 +49,7 @@ export class FolderController {
     }
   }
 
+  // PUT /folder/:folderId: Update folder name
   @Put('/:folderId')
   @HttpCode(200)
   async updateFolder(
