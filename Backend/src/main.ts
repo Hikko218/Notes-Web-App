@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import type { Application } from 'express';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -14,6 +15,8 @@ Sentry.init({
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const expressApp = app.getHttpAdapter().getInstance() as Application;
+  expressApp.set('trust proxy', true);
   app.useGlobalFilters(new SentryExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
@@ -48,6 +51,6 @@ async function bootstrap() {
       max: 60,
     }),
   );
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 void bootstrap();

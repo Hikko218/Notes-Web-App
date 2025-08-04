@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://notes-web-app-ydtr.onrender.com/:path*",
+        destination: "https://notes-web-app-hb94.onrender.com/:path*",
       },
     ];
   },
@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "notes-web-app-ydtr.onrender.com",
+        hostname: "notes-web-app-hb94.onrender.com",
         port: "3000",
         pathname: "/uploads/**",
       },
