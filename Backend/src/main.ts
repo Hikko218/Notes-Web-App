@@ -17,7 +17,11 @@ async function bootstrap() {
   app.use(cookieParser());
   // Enable Cors
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://notes-web-app-tan.vercel.app',
+    ],
     credentials: true,
   });
   // Enable RateLimiter
