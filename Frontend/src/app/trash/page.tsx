@@ -115,55 +115,58 @@ export default function NotesTrashPage() {
       {error && <div className="text-center text-red-400 pt-8">{error}</div>}
 
       {/* Show deleted notes when not loading */}
-      {!loading && (
-        <div className="space-y-4 grid md:grid-cols-2 gap-6">
-          {notes.map((note: Note, idx) => (
-            <motion.div
-              key={note.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.5, delay: idx * 0.08 }}
-              className="flex flex-col bg-gray-800/70 rounded-lg p-4 max-w-90 h-70 shadow overflow-auto"
-            >
-              {/* Note title */}
-              <h2 className="text-xl font-semibold text-yellow-400 mb-2">
-                {note.title}
-              </h2>
-              {/* Note content */}
-              <p className="text-white mb-2 whitespace-pre-line">
-                {note.content}
-              </p>
-              <div className="flex-grow"></div>
-              <div className="flex justify-between">
-                {/* Last updated info */}
-                <div className="text-xs text-gray-400 ">
-                  Last updated:{" "}
-                  {note.updatedAt
-                    ? new Date(note.updatedAt).toLocaleString()
-                    : "-"}
-                </div>
+      {!loading &&
+        (notes.length === 0 ? (
+          <div className="text-center text-white pt-8">Empty</div>
+        ) : (
+          <div className="space-y-4 grid md:grid-cols-2 gap-6">
+            {notes.map((note: Note, idx) => (
+              <motion.div
+                key={note.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
+                className="flex flex-col bg-gray-800/70 rounded-lg p-4 max-w-90 h-70 shadow overflow-auto"
+              >
+                {/* Note title */}
+                <h2 className="text-xl font-semibold text-yellow-400 mb-2">
+                  {note.title}
+                </h2>
+                {/* Note content */}
+                <p className="text-white mb-2 whitespace-pre-line">
+                  {note.content}
+                </p>
+                <div className="flex-grow"></div>
+                <div className="flex justify-between">
+                  {/* Last updated info */}
+                  <div className="text-xs text-gray-400 ">
+                    Last updated:{" "}
+                    {note.updatedAt
+                      ? new Date(note.updatedAt).toLocaleString()
+                      : "-"}
+                  </div>
 
-                {/* Restore and delete buttons */}
-                <div className="flex justify-end gap-3">
-                  <button
-                    className="text-yellow-500 hover:text-white "
-                    onClick={() => handleRestoreNote(note.id)}
-                  >
-                    <ArchiveRestore size={22} />
-                  </button>
-                  <button
-                    className="text-yellow-500 hover:text-red-600 "
-                    onClick={() => handleDeleteNote(note.id)}
-                  >
-                    <Trash2 size={22} />
-                  </button>
+                  {/* Restore and delete buttons */}
+                  <div className="flex justify-end gap-3">
+                    <button
+                      className="text-yellow-500 hover:text-white "
+                      onClick={() => handleRestoreNote(note.id)}
+                    >
+                      <ArchiveRestore size={22} />
+                    </button>
+                    <button
+                      className="text-yellow-500 hover:text-red-600 "
+                      onClick={() => handleDeleteNote(note.id)}
+                    >
+                      <Trash2 size={22} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      )}
+              </motion.div>
+            ))}
+          </div>
+        ))}
     </section>
   );
 }

@@ -9,13 +9,13 @@ COPY package*.json ./
 RUN npm ci
 
 # Copy Prisma schema and migrations
-COPY prisma ./prisma
+COPY ./prisma ./prisma
 
 # Copy source files
 COPY . .
 
 # Generate Prisma client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build the NestJS app
 RUN npm run build
@@ -32,5 +32,9 @@ COPY --from=builder /app/node_modules ./node_modules
 # Expose port (change if your app uses a different port)
 EXPOSE 3000
 
-# Start the app
+# Start the app and ensure Prisma client is generated
+
 CMD ["npm", "run", "start:prod"]
+
+
+

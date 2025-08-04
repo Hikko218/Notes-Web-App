@@ -27,11 +27,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Notes Web App",
     description: "Built with Next.js, Tailwind, TypeScript, shadcn/ui",
-    url: "https://Note-app.de",
+    url: "https://notes-web-app-tan.vercel.app",
     siteName: "Notes Web App",
     images: [
       {
-        url: "https://localhost:3001/Notes_App_Titel_Picture.png",
+        url: "https://notes-web-app-tan.vercel.app/Notes_App_Titel_Picture.png",
         width: 1200,
         height: 630,
         alt: "Notes Web App Preview",
