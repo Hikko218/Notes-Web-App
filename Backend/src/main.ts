@@ -6,9 +6,12 @@ import * as cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { SentryExceptionFilter } from './sentry-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
+import type { Express } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const expressApp = app.getHttpAdapter().getInstance() as Express;
+  expressApp.set('trust proxy', 1);
   app.useGlobalFilters(new SentryExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
