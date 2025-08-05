@@ -14,6 +14,12 @@ export default function Header() {
   const router = useRouter();
   const [loggedOut, setLoggedOut] = useState(false);
 
+  // Reset loggedOut, if user is logged in
+  if (isAuthenticated && loggedOut) {
+    setLoggedOut(false);
+  }
+
+  // Hide header if user is not authenticated and loggedOut
   if (!isAuthenticated || loggedOut) return null;
 
   // Handles user logout

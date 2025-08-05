@@ -30,4 +30,3 @@ jobs:
         run: npm run test:ci
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

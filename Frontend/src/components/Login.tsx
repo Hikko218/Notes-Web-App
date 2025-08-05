@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useAuth } from "@/components/useAuthStatus";
 
 const URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -17,9 +18,17 @@ export default function HeroLogin() {
     email: "",
     password: "",
   });
-
+  
   // Call router
   const router = useRouter();
+
+  // Get authentication status from custom hook
+    const { isAuthenticated } = useAuth();
+
+  // If authenticated, direct to notes page
+    if (isAuthenticated === true) {
+      router.push("/notes");
+      return;}
 
   // Handles input changes for registration fields
   const handleChange = (
