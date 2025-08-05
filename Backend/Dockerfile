@@ -17,6 +17,9 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
+
 # Build the NestJS app
 RUN npm run build
 
