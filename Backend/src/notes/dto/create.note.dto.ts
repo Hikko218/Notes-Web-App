@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsInt } from 'class-validator';
+import { IsString, IsBoolean, IsInt, IsOptional } from 'class-validator';
 
 export class CreateNoteDto {
   @IsString()
@@ -12,4 +12,8 @@ export class CreateNoteDto {
 
   @IsInt()
   userId: number;
+
+  @IsOptional()
+  @IsInt()
+  folderId?: number;
 }
