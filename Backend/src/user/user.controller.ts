@@ -31,7 +31,9 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
       Logger.log('Successfully retrieved user');
-      return user;
+      const { password, ...safeUser } = user;
+      void password;
+      return safeUser;
     } catch (error) {
       Logger.error(`Error retrieving user ${email}: ${error}`);
       throw new NotFoundException('User not found');
@@ -48,7 +50,9 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
       Logger.log('Successfully retrieved user');
-      return user;
+      const { password, ...safeUser } = user;
+      void password;
+      return safeUser;
     } catch (error) {
       Logger.error(`Error retrieving user ${userId}: ${error}`);
       throw new NotFoundException('User not found');
@@ -62,7 +66,9 @@ export class UserController {
     try {
       const user = await this.userService.createUser(createUserDto);
       Logger.log('Successfully created user');
-      return user;
+      const { password, ...safeUser } = user;
+      void password;
+      return safeUser;
     } catch (error) {
       Logger.error(`Error creating user: ${error}`);
       throw new BadRequestException('Registration failed!');
@@ -78,7 +84,9 @@ export class UserController {
     try {
       const user = await this.userService.updateUser(userId, updateUserDto);
       Logger.log('Successfully updated user');
-      return user;
+      const { password, ...safeUser } = user;
+      void password;
+      return safeUser;
     } catch (error) {
       Logger.error(`Error updating user ${userId}: ${error}`);
       throw new BadRequestException('Cannot update user');
