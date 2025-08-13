@@ -16,6 +16,11 @@ Sign up now and explore all features!
 
 ![Screenshot](./Frontend/public/Notes_App_Titel_Picture.png)
 
+**Gallery:**
+| About| Profile | Blog | Trash |
+|------|---------|------|-------|
+| ![About](./Frontend/public/Notes_App_About.png) | ![Profile](./Frontend/public/Notes_App_Profile.png) | ![Notes](./Frontend/public/Notes_App_Notes.png) | ![Trash](./Frontend/public/Notes_App_Trash.png) |
+
 ---
 
 ## ⚙️ Tech Stack
